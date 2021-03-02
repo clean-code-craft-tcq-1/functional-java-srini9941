@@ -1,7 +1,8 @@
 package vitals;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import vitals.model.ThresholdValue;
 
@@ -15,11 +16,11 @@ class ThresholdProvider {
     private static final int MAXIMUM_SOC_VALUE = 80;
     private static final float MAXIMUM_CHANGE_RATE = 0.8f;
 
-    private static final List<ThresholdValue> thresholdList = List.of(
+    private static final List<ThresholdValue> thresholdList = Stream.of(
         new ThresholdValue("Temperature", MINIMUM_TEMPERATURE, MAXIMUM_TEMPERATURE),
         new ThresholdValue("SOC", MINIMUM_SOC_VALUE, MAXIMUM_SOC_VALUE),
         new ThresholdValue("ChargeRate", 0, MAXIMUM_CHANGE_RATE)
-    );
+    ).collect(Collectors.toList());
 
     private ThresholdProvider() {
     }
