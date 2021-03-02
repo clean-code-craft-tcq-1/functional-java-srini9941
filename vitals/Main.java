@@ -1,4 +1,4 @@
-package battery.vitals;
+package vitals;
 
 import java.util.HashMap;
 import java.util.Map;

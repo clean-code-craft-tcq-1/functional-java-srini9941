@@ -1,4 +1,4 @@
-package battery.vitals.model;
+package vitals.model;
 
 /**
  * @author Shrinidhi Muralidhar Karanam on 2021-03-01

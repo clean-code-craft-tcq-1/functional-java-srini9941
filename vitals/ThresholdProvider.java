@@ -1,9 +1,9 @@
-package battery.vitals;
+package vitals;
 
 import java.util.Collections;
 import java.util.List;
 
-import battery.vitals.model.ThresholdValue;
+import vitals.model.ThresholdValue;
 
 /**
  * @author Shrinidhi Muralidhar Karanam on 2021-03-02

@@ -1,10 +1,10 @@
-package battery.vitals;
+package vitals;
 
 import java.util.Map;
 
-import battery.vitals.model.AttributeState;
-import battery.vitals.model.ThresholdValue;
-import battery.vitals.model.VitalsIndicator;
+import vitals.model.AttributeState;
+import vitals.model.ThresholdValue;
+import vitals.model.VitalsIndicator;
 
 /**
  * @author Shrinidhi Muralidhar Karanam on 2021-03-01
