@@ -8,13 +8,17 @@ public class VitalsIndicator {
     private String name;
     private AttributeState status;
 
+    private String message;
+
     public VitalsIndicator(
         String name,
-        AttributeState status
+        AttributeState status,
+        String message
     )
     {
         this.name = name;
         this.status = status;
+        this.message = message;
     }
 
     public String getName() {
@@ -33,4 +37,11 @@ public class VitalsIndicator {
         this.status = status;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

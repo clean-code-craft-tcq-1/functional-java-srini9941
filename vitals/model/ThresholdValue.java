@@ -1,5 +1,7 @@
 package vitals.model;
 
+import java.util.Arrays;
+
 /**
  * @author Shrinidhi Muralidhar Karanam on 2021-03-02
  */
@@ -44,13 +46,4 @@ public class ThresholdValue {
         this.maximumValue = maximumValue;
     }
 
-    public AttributeState verify(float currentValue){
-        if(currentValue < minimumValue ) {
-            return AttributeState.UNDER;
-        }
-        if (currentValue > maximumValue){
-            return AttributeState.OVER;
-        }
-        return AttributeState.OK;
-    }
 }

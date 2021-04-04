@@ -3,6 +3,7 @@ package vitals;
 import java.util.HashMap;
 import java.util.Map;
 
+import vitals.model.AttributeState;
 
 public class Main {
 
@@ -27,5 +28,6 @@ public class Main {
         assert (batteryIsOk(25, 60 , 0.9f) == false);
         assert (batteryIsOk(-10, 70, 0.6f) == false);
         assert (batteryIsOk(25, 10, 0.6f) == false);
+        assert (batteryIsOk(25, 78, 0.7f) == false);
     }
 }
