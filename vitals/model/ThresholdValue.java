@@ -1,7 +1,5 @@
 package vitals.model;
 
-import java.util.Arrays;
-
 /**
  * @author Shrinidhi Muralidhar Karanam on 2021-03-02
  */

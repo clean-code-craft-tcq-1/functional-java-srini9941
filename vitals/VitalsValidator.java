@@ -1,10 +1,18 @@
 package vitals;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import vitals.model.AttributeState;
-import vitals.model.CompareOperator;
 import vitals.model.ThresholdValue;
 import vitals.model.VitalsIndicator;
 
@@ -12,98 +20,49 @@ import vitals.model.VitalsIndicator;
  * @author Shrinidhi Muralidhar Karanam on 2021-03-01
  */
 public class VitalsValidator {
+    private static ResourceBundle messages;
 
-    private boolean anyConditionMatch = false;
-    private String result;
+    static {
+        String appPath = Paths.get( "resources", "application.properties").toString();
+        try(InputStream input = new FileInputStream(appPath)) {
+            Properties prop = new Properties();
+            prop.load(input);
+            String language = prop.get("language").toString();
 
-    public boolean checkBattery(Map<String, Float> batteryAttributes) {
+            Locale locale =  Locale.forLanguageTag(language);
+            messages = ResourceBundle.getBundle("resources.messages", locale);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<VitalsIndicator> getBatteryVitals(Map<String, Float> batteryAttributes) {
         return batteryAttributes.entrySet().stream()
-            .map(this::check)
-            .allMatch(i -> i.getStatus() == AttributeState.OK);
+            .map(this::validate)
+            .collect(Collectors.toList());
     }
 
-    private VitalsIndicator check(Map.Entry<String, Float> entry) {
-        ThresholdValue value = ThresholdProvider.provideThreshold(entry.getKey());
-        String message = null;
-        AttributeState status = null;
-        checkFor(this::highBreach, entry.getValue(), value.getMaximumValue());
-        checkFor(
-            this::highWarning,
-            entry.getValue(),
-            value.getMaximumValue() - getFivePercentOf(value.getMaximumValue())
-        );
-        checkFor(this::lowBreach, entry.getValue(), value.getMinimumValue());
-        checkFor(
-            this::lowWarning,
-            entry.getValue(),
-            value.getMinimumValue() + getFivePercentOf(value.getMinimumValue())
-        );
-        if (!anyConditionMatch) {
-            status = AttributeState.OK;
-        }
-        if (status != AttributeState.OK) {
-            message = entry.getKey() + " " + entry.getValue() + " is " + result;
-            System.out.println(message);
-        }
-        return new VitalsIndicator(entry.getKey(), status, message);
+    private VitalsIndicator validate(Map.Entry<String, Float> entry) {
+        ThresholdValue thresholdValue = ThresholdProvider.provideThreshold(entry.getKey());
+        AttributeChecker checker = new AttributeChecker(thresholdValue, messages);
+        checker.check(entry.getValue());
+        String message = constructReportingMessage(entry.getKey(), entry.getValue(), checker);
+        System.out.println(message);
+        return new VitalsIndicator(entry.getKey(), checker.getAttributeState(), message);
     }
 
-    private void highBreach(
-        float a,
-        float b
+    private String constructReportingMessage(
+        String attribute,
+        Float value,
+        AttributeChecker checker
     )
     {
-        if (CompareOperator.GREATER.apply(a, b)) {
-            result = "over provided threshold";
-            anyConditionMatch = true;
+        if(checker.getAttributeState() != AttributeState.NORMAL){
+            return messages.getString(attribute) + " " + value + " " + messages.getString("IS")+" "+ checker.getResult();
         }
-    }
-
-    private void highWarning(
-        float a,
-        float b
-    )
-    {
-        if (CompareOperator.GREATER.apply(a, b)) {
-            result = "warning to breach high threshold";
-            anyConditionMatch = true;
-        }
-    }
-
-    private void lowBreach(
-        float a,
-        float b
-    )
-    {
-        if (CompareOperator.LESSER.apply(a, b)) {
-            result = "under provided threshold";
-            anyConditionMatch = true;
-        }
-    }
-
-    private void lowWarning(
-        float a,
-        float b
-    )
-    {
-        if (CompareOperator.LESSER.apply(a, b)) {
-            result = "warning to breach low threshold";
-            anyConditionMatch = true;
-        }
-    }
-
-    private void checkFor(
-        BiConsumer<Float, Float> consumer,
-        float t,
-        float u
-    )
-    {
-        if (!anyConditionMatch) {
-            consumer.accept(t, u);
-        }
-    }
-
-    private float getFivePercentOf(float number) {
-        return (float) (number * 0.05);
+        return messages.getString(attribute) + " " + value + " " + messages.getString("IS")+" " + messages.getString("NORMAL");
     }
 }

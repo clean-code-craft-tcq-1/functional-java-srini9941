@@ -1,9 +1,11 @@
 package vitals;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import vitals.model.AttributeState;
+import vitals.model.VitalsIndicator;
 
 public class Main {
 
@@ -18,7 +20,8 @@ public class Main {
         currentAttributeValues.put("SOC", soc);
         currentAttributeValues.put("ChargeRate", chargeRate);
         VitalsValidator validator = new VitalsValidator();
-        return validator.checkBattery(currentAttributeValues);
+        List<VitalsIndicator> batteryVitals = validator.getBatteryVitals(currentAttributeValues);
+        return batteryVitals.stream().allMatch(i -> i.getStatus() == AttributeState.NORMAL);
     }
 
     public static void main(String[] args) {

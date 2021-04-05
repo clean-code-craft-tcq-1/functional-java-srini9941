@@ -6,6 +6,8 @@ package vitals.model;
 public enum AttributeState {
 
     OVER,
+    WARNING_TO_HIGH_BREACH,
     UNDER,
-    OK;
+    WARNING_TO_LOW_BREACH,
+    NORMAL;
 }
