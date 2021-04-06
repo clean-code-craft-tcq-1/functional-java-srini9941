@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import vitals.model.AttributeState;
+import vitals.model.AttributeStateCategory;
 import vitals.model.VitalsIndicator;
 
 public class Main {
@@ -21,7 +22,19 @@ public class Main {
         currentAttributeValues.put("ChargeRate", chargeRate);
         VitalsValidator validator = new VitalsValidator();
         List<VitalsIndicator> batteryVitals = validator.getBatteryVitals(currentAttributeValues);
+        AttributeStateCategory consolidatedBatteryState = consolidateState(batteryVitals);
+        System.out.println(consolidatedBatteryState.toString());
         return batteryVitals.stream().allMatch(i -> i.getStatus() == AttributeState.NORMAL);
+    }
+
+    static AttributeStateCategory consolidateState (List<VitalsIndicator> batteryVitals) {
+        AttributeStateCategory category = AttributeStateCategory.NORMAL;
+        for (VitalsIndicator attributeVital : batteryVitals){
+            if(attributeVital.getStatus().getCategory().getValue() > category.getValue()){
+                category = attributeVital.getStatus().getCategory();
+            }
+        }
+        return category;
     }
 
     public static void main(String[] args) {
@@ -32,5 +45,6 @@ public class Main {
         assert (batteryIsOk(-10, 70, 0.6f) == false);
         assert (batteryIsOk(25, 10, 0.6f) == false);
         assert (batteryIsOk(25, 78, 0.7f) == false);
+        assert (batteryIsOk(-10, 78, 0.7f) == false);
     }
 }

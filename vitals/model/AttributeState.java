@@ -5,9 +5,19 @@ package vitals.model;
  */
 public enum AttributeState {
 
-    OVER,
-    WARNING_TO_HIGH_BREACH,
-    UNDER,
-    WARNING_TO_LOW_BREACH,
-    NORMAL;
+    OVER(AttributeStateCategory.CRITICAL),
+    WARNING_TO_HIGH_BREACH(AttributeStateCategory.WARNING),
+    UNDER(AttributeStateCategory.CRITICAL),
+    WARNING_TO_LOW_BREACH(AttributeStateCategory.WARNING),
+    NORMAL(AttributeStateCategory.NORMAL);
+
+    private final AttributeStateCategory category;
+
+    AttributeState (AttributeStateCategory category) {
+        this.category = category;
+    }
+
+    public AttributeStateCategory getCategory () {
+        return category;
+    }
 }
